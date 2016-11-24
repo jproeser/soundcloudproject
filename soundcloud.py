@@ -16,6 +16,10 @@ import requests
 import re
 import nltk
 import json
+from pyzipcode import Pyzipcode as pz
+import unittest
+import pyzipcode
+#from pyzipcode import ZipCodeDatabase
 
 
  
@@ -191,16 +195,87 @@ def findAccounts():
 		if acczip >= 4:
 			print(acczip)
 
+def zipcode():
+	#zcdb = ZipCodeDatabase()
+	#self.db = pyzipcode.ZipCodeDatabase()
+	
+	zipcode = str(input('Enter a zip code'))
+	radius = int(input('Enter a mile radius'))
+	#[z.zip for z in zcdb.get_zipcodes_around_radius(zipcode, radius)]
+    #def test_radius(self):
+
+	zips = get_zipcodes_around_radius(zipcode, radius)
+	assertTrue(zipcode in [zip.zip for zip in zips])
+
+
+########
+	# zips = self.db.get_zipcodes_around_radius(zipcode, radius)
+	# self.assertTrue(zipcode in [zip.zip for zip in zips])
+##########
+
+    # def test_radius(self):
+    #     zips = self.db.get_zipcodes_around_radius('54115', 30)
+    #     self.assertTrue('54304' in [zip.zip for zip in zips])
+
+
 #getReposts('jproeser')
 
 # getAccountFromUser()
 # getZipFromUser()
-#addToDatabase()
-findAccounts()
+#taddToDatabase()
+#findAccounts()
+zipcode()
 
 
 
 
 #fout = open('accounts.txt','w') --- used initially to create my file
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ZipCodeDatabase(object):
+  
+    def __init__(self, conn_manager=None):
+        if conn_manager is None:
+            conn_manager = ConnectionManager()
+        self.conn_manager = conn_manager
+  
+    def get_zipcodes_around_radius(self, zip, radius):
+        zips = self.get(zip)
+        if zips is None:
+            raise ZipNotFoundException("Could not find zip code you're searching by.")
+        else:
+            zip = zips[0]
+  
+        radius = float(radius)
+  
+        long_range = (zip.longitude-(radius/69.0), zip.longitude+(radius/69.0))
+        lat_range = (zip.latitude-(radius/49.0), zip.latitude+(radius/49.0))
+  
+        return format_result(self.conn_manager.query(ZIP_RANGE_QUERY % (
+            long_range[0], long_range[1],
+            lat_range[0], lat_range[1]
+        )))
+        
 
