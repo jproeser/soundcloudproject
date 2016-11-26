@@ -248,12 +248,6 @@ fout = open('accounts.txt','w') --- used initially to create my file
 
 
 
-
-
-
-
-
-
 # # class ZipCodeDatabase(object):
   
 # #     def __init__(self, conn_manager=None):
