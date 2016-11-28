@@ -23,63 +23,6 @@ from uszipcode import ZipcodeSearchEngine
 
 
 
- 
-
-#  import os
-# from selenium import webdriver
-
-# chromedriver = "/Users/adam/Downloads/chromedriver"
-# os.environ["webdriver.chrome.driver"] = chromedriver
-# driver = webdriver.Chrome(chromedriver)
-# driver.get("http://stackoverflow.com")
-# driver.quit()
-
-
-# Load WebDriver and navigate to the page url.
-# This will open a browser window.
-def getReposts(x):
-	#chromedriver = "/usr/local/bin/chromedriver"
-	chromedriver = "files/chromedriver"
-	os.environ["webdriver.chrome.driver"] = chromedriver
-	driver = webdriver.Chrome(chromedriver)
-
-
-	#driver = webdriver.Chrome("/files/chromedriver")
-	url = 'https://soundcloud.com/'+str(x)+'/tracks'
-	driver.get(url)
-	 
-	track_aria=[]
-	elem = driver.find_element_by_tag_name('a')
-	#print (elem)
-	for x in range(500):
-		try:
-			elem.send_keys(Keys.PAGE_DOWN)
-		except:
-			print("fuuuucckkk")
-	for x in driver.find_elements_by_class_name('sound'):
-		track_aria.append(x.get_attribute('aria-label'))
-	#driver.quit()
-
-
-	theTracks=[]
-	for track in track_aria:
-		sub = re.findall('(?<=\:)(.*?)(?=\,)'.strip(), track)
-		try:
-			theTracks.append(sub[0].strip())
-		except:
-			print ("this thing")
-	artists = []
-	for x in theTracks:
-		art = x.split("by")
-		try:
-			artists.append(str(art[1]).strip())
-		except:
-			pass
-	return artists
-
-
-
-
 ## URLs USE ONLY NUMBERS, LOWECASE LETTERS, UNDERSCORES OR HYPHENS... C
 def getAccountFromUser():
 	print('\nHello, welcome to LocalBeats. Before we begin, you must add your profile to our database.')
@@ -186,14 +129,214 @@ def listofusers():
 			# enter radius
 			# find zip codes in radius
 
-print('fdsaf')
-doc = open('accounts.json')
-# print (accounts['60093'])
 
-for accounts in doc:
-	print (accounts[jproeser])
-	print ('Name')
-print('list of users')
+
+
+##########################
+# with open('accounts.json', 'r') as doc:
+# 	# x = json.load(doc)
+# 	# for accounts in x:
+# 	# 	print(accounts)
+
+
+
+
+
+# x = open('accounts.json')
+# for key, value in x:
+#     print (key["60093"], value)
+
+
+
+
+#48291
+
+
+
+# with open('accounts.json') as json_data:
+#     d = json.load(json_data)
+#     print(d)
+
+
+
+
+
+# with open("accounts.json") as json_file:
+#     json_data = json.load(json_file)
+#     print(json_data)
+
+
+
+
+
+# with open('accounts.json', 'r') as fp:
+# 	accounts = json.load(fp)
+# 	for line in accounts:
+# 		line.strip()
+# 	print(line)
+
+
+
+
+
+# with open('accounts.json') as f:
+#     data = f.read()
+#     jsondata = json.loads(data)
+#     print(jsondata)
+
+
+
+
+
+
+# json_data = open('accounts.json')
+# my_dict = json.load(json_data)
+# print(my_dict["48291"])
+
+
+
+
+
+
+
+# print (accounts['60093'])
+# for accounts in doc:
+# 	print (accounts["48109"])
+# 	print ('Name')
+# print('list of users')
+
+
+
+
+	# accounts = accounts.rstrip()
+	# print(accounts)
+
+
+#######################
+
+
+
+
+
+
+	
+from bs4 import BeautifulSoup
+
+from selenium import webdriver
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import random
+
+
+def getRandomSong(x):
+
+
+	chromedriver = "files/chromedriver"
+	os.environ["webdriver.chrome.driver"] = chromedriver
+	driver = webdriver.Chrome(chromedriver)
+
+	url = 'https://soundcloud.com/'+str(x)+'/tracks'
+	driver.get(url)
+	 # driver = webdriver.Firefox()
+	# driver.get('http://news.ycombinator.com')
+
+	html = driver.page_source
+	soup = BeautifulSoup(html, "html.parser")
+
+
+	count = 0
+	songlinks=[]
+	elem = driver.find_element_by_tag_name('a')
+	for x in range(500):
+		try:
+			elem.send_keys(Keys.PAGE_DOWN)
+		except:
+			print("error 1")
+	#for x in driver.find_elements_by_class_name('sc-link-dark'):
+	for x in driver.find_elements_by_class_name('soundTitle__title'):
+
+		songlinks.append(x.get_attribute('href'))
+		count += 1
+	
+	# myregx = 'https://soundcloud.com/'+str(x)
+	# myregex = str('^' + myregx)
+	# for item in songlinks:
+	# 	# if not re.search(('^https://soundcloud.com/'+str(x)), item):
+	# 	# 	songlinks.remove(item)
+
+	# 	if not re.search(myregex, item):
+	# 		songlinks.remove(item)
+
+
+
+	# for item in songlinks:
+	# 	print(item)
+	# print(count)
+
+
+	return songlinks
+# ###############
+# 	print(random.choice(songlinks))
+# 	another = input('To print another song enter \"y\" (or enter anything else to exit)\nEnter command---------------------->')	
+
+
+# 	while another == "y":
+# 		print(random.choice(songlinks))
+# 		another = input('To print another song enter \"y\" (or enter anything else to exit)\nEnter command---------------------->')
+# 	else:
+# 		print('Done')
+# 		exit()
+# 		driver.quit()
+# ##################
+x = 'phoenix'
+#getRandomSong(x)
+
+artists = ['nickstevensent', 'ezequiel-rueda', 'maggierogers']
+templist = []
+totallist = []
+for item in artists:
+	templist = getRandomSong(item)
+
+	myregx = 'https://soundcloud.com/'+str(item)
+	myregex = str('^' + myregx)
+	print('MY REGEX------ \n',myregex)
+	for link in templist:
+		# if not re.search(('^https://soundcloud.com/'+str(x)), item):
+		# 	songlinks.remove(item)
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+
+		if not re.search(myregex, link):
+			templist.remove(link)
+
+
+	totallist = totallist + templist
+
+for item in totallist:
+	print(item)
+
+
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+
+# #def moresongs():
+# another = input('To print another song enter \"y\"-->\n Or enter anything else to exit')
+# #while True:
+# while another == "y":
+# 	print('test')
+# 	another = input('To print another song enter \"y\"-->\n Or enter anything else to exit')
+# else:
+# 	print('done')
+# 	exit()
+# ######
 
 
 def randomsongs():

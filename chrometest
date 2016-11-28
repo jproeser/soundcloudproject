@@ -1,0 +1,79 @@
+	
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import os
+import requests
+import re
+import nltk
+import json
+from pyzipcode import Pyzipcode as pz
+import unittest
+import pyzipcode
+from uszipcode import ZipcodeSearchEngine
+
+
+
+from bs4 import BeautifulSoup
+
+from selenium import webdriver
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+def getReposts(x):
+	#chromedriver = "/usr/local/bin/chromedriver"
+	chromedriver = "files/chromedriver"
+	os.environ["webdriver.chrome.driver"] = chromedriver
+	driver = webdriver.Chrome(chromedriver)
+
+
+##soundTitle__title
+
+	#driver = webdriver.Chrome("/files/chromedriver")
+	url = 'https://soundcloud.com/'+str(x)+'/tracks'
+	driver.get(url)
+	
+	count = 0
+	track_aria=[]
+	elem = driver.find_element_by_tag_name('a')
+	for x in range(500):
+		try:
+			elem.send_keys(Keys.PAGE_DOWN)
+		except:
+			print("error 1")
+	#for x in driver.find_elements_by_class_name('sc-link-dark'):
+	for x in driver.find_elements_by_class_name('soundTitle__title'):
+
+		track_aria.append(x.get_attribute('href'))
+		count += 1
+	#driver.quit()
+	#print('TRACK_ARIA------\n\n', track_aria)
+	for item in track_aria:
+		print(item)
+	print(count)
+	#driver.quit()
+
+	# count = 0
+	# theTracks=[]
+	# #print('INITIAL-----\n\n', track_aria)
+	# for track in track_aria:
+	# 	sub = re.findall('(?<=\:)(.*?)(?=\,)'.strip(), track)
+	# 	try:
+	# 		theTracks.append(sub[0].strip())
+	# 	except:
+	# 		count += 1
+	# 		print(count)
+	# 		#print (" thing")
+	# #return track_aria
+	# #print('TRACK_ARIA------\n\n', track_aria)
+	# print('THE TRACKS-----\n\n', theTracks)
+	# # artists = []
+	# # for x in theTracks:
+	# # 	art = x.split("by")
+	# # 	try:
+	# # 		artists.append(str(art[1]).strip())
+	# # 	except:
+	# # 		pass
+	# # print ('ARTISTS-----\n\n', artists)
+
+x = 'phoenix'
+getReposts(x)
