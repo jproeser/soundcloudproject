@@ -19,7 +19,8 @@ import json
 from pyzipcode import Pyzipcode as pz
 import unittest
 import pyzipcode
-#from pyzipcode import ZipCodeDatabase
+from uszipcode import ZipcodeSearchEngine
+
 
 
  
@@ -116,6 +117,148 @@ def getAccountFromUser():
 	# 		#age was successfully parsed!
 	# 		#we're ready to exit the loop.
 	# 		break
+
+def addusertodatabase():
+	########################################  ADD A USER TO DATABASE ################################# 
+	##########   GET ACCOUNT   ##########   
+	print('\nHello, welcome to LocalBeats. Before we begin, you must add your profile to our database.')
+
+	while True:
+		try:
+			print('Please enter your account name as it appears in the URL after "https://soundcloud.com/" ')
+			accname = str(input('acc--->'))
+			url = str("https://soundcloud.com/" + accname)
+			request = requests.get(url)
+			if request.status_code == 200:
+				#print(accname)
+				break
+			else:
+				print('\nSorry, this was an invalid response, please try again. Souncloud URL names must only use numbers, lowercase letters, underscores or hyphens, and they must start with a letter or number. \nPlease try again. And make sure you are connected to the internet.') 
+				continue
+		except:
+			print('\nSorry, this was an invalid response, please try again. Souncloud URL names must only use numbers, lowercase letters, underscores or hyphens, and they must start with a letter or number. \nPlease try again. And make sure you are connected to the internet.') 
+			continue
+		else:
+			break
+
+	readyaccname = accname
+	readyfullurl = url 
+
+	##########   GET ZIP CODE   ##########   
+	print('Please enter the permanent zip code you would like to associate with your account')
+
+	while True:
+		try:
+			acczip = int(input('--->'))
+			search = ZipcodeSearchEngine()
+			zipcode = search.by_zipcode(str(acczip))
+		except ValueError:
+			print("Sorry, I didn't understand that. Please enter a valid zip code")
+			continue
+		else:
+			break
+
+	readyacczip = acczip
+
+	##########   ADD TO DATABASE   ##########   
+	accounts = {}
+
+	accounts[readyacczip] = readyaccname
+
+	with open('accounts.json', 'a') as fp:
+		json.dump(accounts, fp, indent=4)
+
+	print('Thank you, your account has been added as \"'+readyaccname+'\" (Full URL:', readyfullurl+")", 'with Zip Code', readyacczip)
+	options()
+
+
+
+
+######### FIND A LIST OF USERS   ###########
+def listofusers():
+	with open('accounts.json', 'r') as fp:
+	    accounts = json.load(fp)
+	for acczip in accounts:
+		if acczip >= 4:
+			print(acczip)
+	
+			# enter zipcode 
+			# enter radius
+			# find zip codes in radius
+
+print('fdsaf')
+doc = open('accounts.json')
+# print (accounts['60093'])
+
+for accounts in doc:
+	print (accounts[jproeser])
+	print ('Name')
+print('list of users')
+
+
+def randomsongs():
+	print('random songs')
+
+
+
+def exit():
+	print('Thank you for using LocalBeats. Have a good day!')
+
+
+
+########## OPTIONS #############
+def options():
+	print('\nPlease enter a number based on the following options:')
+	print('1 - Add another user to the database')
+	print('2 - Find a list of users within a particular radius of a zip code')
+	print('3 - Generate a random song link from users within a particular radius of a zip code')
+	print('4 - Exit')
+
+
+
+	#try:
+	option = input('Number-->')
+	if option == "1":
+		addusertodatabase()
+	elif option == "2":
+		listofusers()
+	elif option == "3":
+		randomsongs()
+	elif option == "4":
+		exit()
+	else:
+		print('Sorry this was not a valid input')
+		#options()
+
+	#except:
+	#	print('Sorry this was not a valid input')
+		#options()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def getZipFromUser():
 	print('Please enter the permanent zip code you would like to associate with your account')
 	acczip = int(input('--->'))
@@ -132,12 +275,12 @@ def getZipFromUser():
 	# 		#we're ready to exit the loop.
 	# 		break
 
-
 def addToDatabase():
 	accounts = {}
 	accname = str(input('acc--->'))
 	acczip = int(input('zip--->'))
 	accounts[accname] = acczip
+
 
 	# fout = open('accounts.txt', 'a')
 	# fout.write(accounts)
@@ -233,67 +376,54 @@ def myzipcode():
 
 
 
-from uszipcode import ZipcodeSearchEngine
+
+################
+
+
+# from uszipcode import ZipcodeSearchEngine
 
 
 
 
 
 
-##GET ZIPCODE
+# ##GET ZIPCODE
 
+def getzipcodes():
+	while True:
+		try:
+			print('Please enter the permanent zip code you would like to associate with your account')
+			acczip = int(input('--->'))
+			search = ZipcodeSearchEngine()
+			zipcode = search.by_zipcode(str(acczip))
+			print(zipcode)
 
-while True:
-	try:
-		print('Please enter the permanent zip code you would like to associate with your account')
-		acczip = int(input('--->'))
-		search = ZipcodeSearchEngine()
-		zipcode = search.by_zipcode(str(acczip))
-		print(zipcode)
-
-		mylat = re.findall('"Latitude": (\S+),', str(zipcode))
-		mylong = re.findall('"Longitude": (\S+),', str(zipcode))
-		print('mylat-----',mylat)
-		print('mylong------',mylong)
-		print('LATITUDE====', zipcode.Latitude)
-		print('LONGITUDE====', zipcode.Longitude)
-		print('CITY=====', zipcode.City)
-		###########################  LAT  #######  LONG  ##########
-		#res = search.by_coordinate(39.122229, -77.133578, radius=30, returns=5)
-		#res = search.by_coordinate(int(mylat), int(mylong), radius=30)
-		res = search.by_coordinate(zipcode.Latitude, zipcode.Longitude, radius=10, returns=100)
-		print('RES----------',len(res))
-		len(res)
-		for zipcode in res:
-			#"^name: (\w+)"
-			#myzip = re.search('^"Zipcode":  "(\w+)")', str(zipcode))
-			##myzip = re.findall('Zipcode": "(\S+)"', str(zipcode))
-			#myzip = re.findall("Zipcode":, str(zipcode))
-			#print(myzip)
-			#print(Zipcode)
-			print('Zipcode: ',zipcode.Zipcode, '\n-->City: ', zipcode.City)
-	except ValueError:
-		print("Sorry, I didn't understand that.")
-		continue
-	else:
-		break
-
-
-
-
-
-
-while True:
-	try:
-		print('Please enter the permanent zip code you would like to associate with your account')
-		acczip = int(input('--->'))
-		search = ZipcodeSearchEngine()
-		zipcode = search.by_zipcode(str(acczip))
-	except ValueError:
-		print("Sorry, I didn't understand that.")
-		continue
-	else:
-		break
+			mylat = re.findall('"Latitude": (\S+),', str(zipcode))
+			mylong = re.findall('"Longitude": (\S+),', str(zipcode))
+			print('mylat-----',mylat)
+			print('mylong------',mylong)
+			print('LATITUDE====', zipcode.Latitude)
+			print('LONGITUDE====', zipcode.Longitude)
+			print('CITY=====', zipcode.City)
+			###########################  LAT  #######  LONG  ##########
+			#res = search.by_coordinate(39.122229, -77.133578, radius=30, returns=5)
+			#res = search.by_coordinate(int(mylat), int(mylong), radius=30)
+			res = search.by_coordinate(zipcode.Latitude, zipcode.Longitude, radius=10, returns=100)
+			print('RES----------',len(res))
+			len(res)
+			for zipcode in res:
+				#"^name: (\w+)"
+				#myzip = re.search('^"Zipcode":  "(\w+)")', str(zipcode))
+				##myzip = re.findall('Zipcode": "(\S+)"', str(zipcode))
+				#myzip = re.findall("Zipcode":, str(zipcode))
+				#print(myzip)
+				#print(Zipcode)
+				print('Zipcode: ',zipcode.Zipcode, '\n-->City: ', zipcode.City)
+		except ValueError:
+			print("Sorry, I didn't understand that.")
+			continue
+		else:
+			break
 
 
 
@@ -329,6 +459,7 @@ while True:
 
 
 
+#options()
 
 
 
