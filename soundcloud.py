@@ -20,6 +20,15 @@ from pyzipcode import Pyzipcode as pz
 import unittest
 import pyzipcode
 from uszipcode import ZipcodeSearchEngine
+	
+from bs4 import BeautifulSoup
+
+from selenium import webdriver
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import random
+
+
 
 
 
@@ -60,6 +69,7 @@ def getAccountFromUser():
 	# 		#age was successfully parsed!
 	# 		#we're ready to exit the loop.
 	# 		break
+import sqlite3
 
 def addusertodatabase():
 	########################################  ADD A USER TO DATABASE ################################# 
@@ -103,7 +113,13 @@ def addusertodatabase():
 
 	readyacczip = acczip
 
-	##########   ADD TO DATABASE   ##########   
+# import json
+# with open('data.txt', 'w') as outfile:
+#     json.dump(data, outfile)
+
+
+	##########   ADD TO DATABASE   ########## 
+
 	accounts = {}
 
 	accounts[readyacczip] = readyaccname
@@ -112,120 +128,148 @@ def addusertodatabase():
 		json.dump(accounts, fp, indent=4)
 
 	print('Thank you, your account has been added as \"'+readyaccname+'\" (Full URL:', readyfullurl+")", 'with Zip Code', readyacczip)
-	options()
+	#options()
+
+	# with open('accounts.json', 'w') as f:
+	# 	json.dump([], f)
+
+
+	#with open('accounts.json', 'a') as feedsjson:
+		# #feeds = json.load(feedsjson)
+		# zipcode = []
+		# name = []
+
+		# entry = {zipcode['Zipcode'] : readyacczip, name['Name'] : readyaccname}
+		# #feeds.append(entry)
+		# json.dump(entry, feedsjson, indent=4)
 
 
 
+# 	accounts = {}
+
+# 	zipc = readyacczip
+# 	name = readyaccname
+# 	z = {}
+# 	z['Zipcode'] = zipc
+# 	n = {}
+# 	n['Name'] = name
+# 	x = {}
+# 	a = x['Zipcode'] = zipc
+# 	b = x['Name'] = name
+# 	accounts = (a ,b)
+# 	#accounts[zipc] = name
+# 	#accounts = [z, n]
+# 	with open('accounts.json', 'a') as fp:
+# 		json.dump(accounts, fp, indent=4)
+
+# 	print('Thank you, your account has been added as \"'+readyaccname+'\" (Full URL:', readyfullurl+")", 'with Zip Code', readyacczip)
+# # # 	#options()
+
+
+
+# input = '''
+# [
+#   { "id" : "001",
+#     "x" : "2",
+#     "name" : "Chuck"
+#   } ,
+#   { "id" : "009",
+#     "x" : "7",
+#     "name" : "Chuck"
+#   }
+# ]'''
+
+# info = json.loads(input)
+# print('User count:', len(info))
+
+# for item in info:
+#     print('Name', item['name'])
+#     print('Id', item['id'])
+#     print('Attribute', item['x'])
+
+
+
+
+#addusertodatabase()
+
+def getzipcodes():
+	while True:
+		try:
+			print('Please enter the zip code you would like to find accounts around')
+			searchzip = int(input('--->'))
+			print('Please enter the radius you would like to find accounts with')
+			searchradius = int(input('--->'))
+			search = ZipcodeSearchEngine()
+			zipcode = search.by_zipcode(str(searchzip))
+			print(zipcode)
+
+			mylat = re.findall('"Latitude": (\S+),', str(zipcode))
+			mylong = re.findall('"Longitude": (\S+),', str(zipcode))
+			print('mylat-----',mylat)
+			print('mylong------',mylong)
+			print('LATITUDE====', zipcode.Latitude)
+			print('LONGITUDE====', zipcode.Longitude)
+			print('CITY=====', zipcode.City)
+			###########################  LAT  #######  LONG  ##########
+			#res = search.by_coordinate(39.122229, -77.133578, radius=30, returns=5)
+			#res = search.by_coordinate(int(mylat), int(mylong), radius=30)
+			res = search.by_coordinate(zipcode.Latitude, zipcode.Longitude, radius= searchradius, returns=100)
+			print('RES----------',len(res))
+			len(res)
+			searchresults = []
+			for zipcode in res:
+				#"^name: (\w+)"
+				#myzip = re.search('^"Zipcode":  "(\w+)")', str(zipcode))
+				##myzip = re.findall('Zipcode": "(\S+)"', str(zipcode))
+				#myzip = re.findall("Zipcode":, str(zipcode))
+				#print(myzip)
+				#print(Zipcode)
+				searchresults.append(zipcode.Zipcode)
+				print('Zipcode: ',zipcode.Zipcode, '\n-->City: ', zipcode.City)
+		except ValueError:
+			print("Sorry, I didn't understand that.")
+			continue
+		else:
+			break
+	#print('RESULTS -----', searchresults)
+	return(searchresults)
+
+
+
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
+##########################################################################################################################################################################################
 
 ######### FIND A LIST OF USERS   ###########
 def listofusers():
+	# print('xxxxx',getzipcodes)
 	with open('accounts.json', 'r') as fp:
-	    accounts = json.load(fp)
-	for acczip in accounts:
-		if acczip >= 4:
-			print(acczip)
+	# accounts = json.load(fp)
+		names = []
+		zips = [60093, 48109]
+
+		for acczip in fp:
+			for zipcode in zips:
+				#print(zipcode)
+				x = '"'
+				zipsearch = str(zipcode)
+				y = '": "(\S+)"'
+				myzipsearch = str(x + zipsearch + y)
+				links = re.findall(myzipsearch, acczip)
+				for link in links:
+					names.append(link)
+	print('NAMES---->',names)
 	
-			# enter zipcode 
-			# enter radius
-			# find zip codes in radius
 
+listofusers()
+#addusertodatabase()
 
-
-
-##########################
-# with open('accounts.json', 'r') as doc:
-# 	# x = json.load(doc)
-# 	# for accounts in x:
-# 	# 	print(accounts)
-
-
-
-
-
-# x = open('accounts.json')
-# for key, value in x:
-#     print (key["60093"], value)
-
-
-
-
-#48291
-
-
-
-# with open('accounts.json') as json_data:
-#     d = json.load(json_data)
-#     print(d)
-
-
-
-
-
-# with open("accounts.json") as json_file:
-#     json_data = json.load(json_file)
-#     print(json_data)
-
-
-
-
-
-# with open('accounts.json', 'r') as fp:
-# 	accounts = json.load(fp)
-# 	for line in accounts:
-# 		line.strip()
-# 	print(line)
-
-
-
-
-
-# with open('accounts.json') as f:
-#     data = f.read()
-#     jsondata = json.loads(data)
-#     print(jsondata)
-
-
-
-
-
-
-# json_data = open('accounts.json')
-# my_dict = json.load(json_data)
-# print(my_dict["48291"])
-
-
-
-
-
-
-
-# print (accounts['60093'])
-# for accounts in doc:
-# 	print (accounts["48109"])
-# 	print ('Name')
-# print('list of users')
-
-
-
-
-	# accounts = accounts.rstrip()
-	# print(accounts)
 
 
 #######################
 
 
-
-
-
-
-	
-from bs4 import BeautifulSoup
-
-from selenium import webdriver
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
-import random
 
 
 def getRandomSong(x):
@@ -237,8 +281,7 @@ def getRandomSong(x):
 
 	url = 'https://soundcloud.com/'+str(x)+'/tracks'
 	driver.get(url)
-	 # driver = webdriver.Firefox()
-	# driver.get('http://news.ycombinator.com')
+
 
 	html = driver.page_source
 	soup = BeautifulSoup(html, "html.parser")
@@ -275,6 +318,8 @@ def getRandomSong(x):
 
 
 	return songlinks
+	driver.quit()
+
 # ###############
 # 	print(random.choice(songlinks))
 # 	another = input('To print another song enter \"y\" (or enter anything else to exit)\nEnter command---------------------->')	
@@ -287,45 +332,67 @@ def getRandomSong(x):
 # 		print('Done')
 # 		exit()
 # 		driver.quit()
+
+
+
+# # ##################
+# x = 'phoenix'
+# #getRandomSong(x)
+
+# artists = ['nickstevensent', 'ezequiel-rueda', 'maggierogers']
+# templist = []
+# totallist = []
+# for item in artists:
+# 	templist = getRandomSong(item)
+
+# 	myregx = 'https://soundcloud.com/'+str(item)
+# 	myregex = str('^' + myregx)
+# 	#print('MY REGEX------ \n',myregex)
+# 	for link in templist:
+# 		# if not re.search(('^https://soundcloud.com/'+str(x)), item):
+# 		# 	songlinks.remove(item)
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+
+# 		if not re.search(myregex, link):
+# 			templist.remove(link)
+
+
+# 	totallist = totallist + templist
+
+# # for item in totallist:
+# # 	print(item)
+
+
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
+
+
+# ###############
+# print(random.choice(totallist))
+# another = input('To print another song enter \"y\" (or enter anything else to exit)\nEnter command---------------------->')	
+
+
+# while another == "y":
+# 	print(random.choice(totallist))
+# 	another = input('To print another song enter \"y\" (or enter anything else to exit)\nEnter command---------------------->')
+# else:
+# 	print('Done')
+# 	exit()
 # ##################
-x = 'phoenix'
-#getRandomSong(x)
 
-artists = ['nickstevensent', 'ezequiel-rueda', 'maggierogers']
-templist = []
-totallist = []
-for item in artists:
-	templist = getRandomSong(item)
-
-	myregx = 'https://soundcloud.com/'+str(item)
-	myregex = str('^' + myregx)
-	print('MY REGEX------ \n',myregex)
-	for link in templist:
-		# if not re.search(('^https://soundcloud.com/'+str(x)), item):
-		# 	songlinks.remove(item)
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-
-		if not re.search(myregex, link):
-			templist.remove(link)
+# ##########################################################################################################################################################################################
+# ##########################################################################################################################################################################################
 
 
-	totallist = totallist + templist
-
-for item in totallist:
-	print(item)
-
-
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
-##########################################################################################################################################################################################
 
 # #def moresongs():
 # another = input('To print another song enter \"y\"-->\n Or enter anything else to exit')
@@ -376,10 +443,6 @@ def options():
 	#except:
 	#	print('Sorry this was not a valid input')
 		#options()
-
-
-
-
 
 
 
@@ -504,6 +567,7 @@ def myzipcode():
 #         self.assertTrue('54304' in [zip.zip for zip in zips])
 
 
+
 # getReposts('jproeser')
 
 # getAccountFromUser()
@@ -531,48 +595,6 @@ def myzipcode():
 
 
 # ##GET ZIPCODE
-
-def getzipcodes():
-	while True:
-		try:
-			print('Please enter the permanent zip code you would like to associate with your account')
-			acczip = int(input('--->'))
-			search = ZipcodeSearchEngine()
-			zipcode = search.by_zipcode(str(acczip))
-			print(zipcode)
-
-			mylat = re.findall('"Latitude": (\S+),', str(zipcode))
-			mylong = re.findall('"Longitude": (\S+),', str(zipcode))
-			print('mylat-----',mylat)
-			print('mylong------',mylong)
-			print('LATITUDE====', zipcode.Latitude)
-			print('LONGITUDE====', zipcode.Longitude)
-			print('CITY=====', zipcode.City)
-			###########################  LAT  #######  LONG  ##########
-			#res = search.by_coordinate(39.122229, -77.133578, radius=30, returns=5)
-			#res = search.by_coordinate(int(mylat), int(mylong), radius=30)
-			res = search.by_coordinate(zipcode.Latitude, zipcode.Longitude, radius=10, returns=100)
-			print('RES----------',len(res))
-			len(res)
-			for zipcode in res:
-				#"^name: (\w+)"
-				#myzip = re.search('^"Zipcode":  "(\w+)")', str(zipcode))
-				##myzip = re.findall('Zipcode": "(\S+)"', str(zipcode))
-				#myzip = re.findall("Zipcode":, str(zipcode))
-				#print(myzip)
-				#print(Zipcode)
-				print('Zipcode: ',zipcode.Zipcode, '\n-->City: ', zipcode.City)
-		except ValueError:
-			print("Sorry, I didn't understand that.")
-			continue
-		else:
-			break
-
-
-
-
-
-
 
 
 
