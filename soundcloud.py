@@ -152,10 +152,13 @@ def listofusers():
 				links = re.findall(myzipsearch, acczip)
 				for link in links:
 					names.append(link)
-	print('\nSoundcloud users in our database that are within ' + str(searchradius) + ' miles of ' + str(searchcity) + ', ' + str(searchstate) + ' (' + str(searchzip) + '):')
-	for account in names:
-		print(account)
-	#print('NAMES----> ',names)
+	if names <= 0:
+		print('Sorry, but we do not have any users in our databse')
+	else:
+		print('\nSoundcloud users in our database that are within ' + str(searchradius) + ' miles of ' + str(searchcity) + ', ' + str(searchstate) + ' (' + str(searchzip) + '):')
+		for account in names:
+			print(account)
+		#print('NAMES----> ',names)
 	print('\nPlease enter a number based on the following options:')
 	print('1 - Open each of these user\'s profile')
 	print('2 - Redo your search')
@@ -163,9 +166,13 @@ def listofusers():
 	print('4 - Exit')
 	option = input('---> ')
 	if option == "1":
-		for account in names:
-			webbrowser.open('https://soundcloud.com/'+str(account), new=2, autoraise=True)
-		options()
+		if names <= 0:
+			print('Sorry, but we do not have any users in our databse')
+		else:
+			for account in names:
+				webbrowser.open('https://soundcloud.com/'+str(account), new=2, autoraise=True)
+			print('\nThank you, the user accounts have been opened in your default browser and you are now back to the main menu')
+			options()
 	elif option == "2":
 		listofusers()
 	elif option == "3":
