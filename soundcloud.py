@@ -18,41 +18,28 @@ import sqlite3
 import webbrowser  
 
 def getzip():
-
-	#x = a
 	while True:
 		try:
 			x = input('---> ')
-			# x = int(input('---> '))
 			float(x)
 			if len(str(x)) != 5:
 				print('\nPlease enter a 5-digit zip code\n')
-				#x = int(input('---> '))
 				continue
-			#searchzip = x
 		except ValueError:
 			print ("\nThis is not a number. Please try again.\n")
 			continue
-		# while len(str(searchzip)) != 5:
-		# 	print('\nPlease enter a 5-digit zip code\n')
-		# 	searchzip = int(input('---> '))
 		else:
 			return x
 			break
 
 def getradius():
-
-	#y = z
 	while True:
 		try:
 			y = input('---> ')
-			# y = int(input('---> '))
 			float(y)
 			if str(y) == '0':
 				print('\nPlease enter a search radius larger than 0\n')
-				#y = int(input('---> '))
 				continue
-			#searchradius = y
 		except ValueError:
 			print ("\nThis is not a number. Please try again.\n")
 			continue
@@ -287,13 +274,10 @@ def getrandomsongs():
 				print('3 - Return to the main menu')
 				print('4 - Exit')
 				rsong = randsong()
-				#abc = str(rsong)
 				option = input('---> ')
 				if option == "1":
 					print('You may continually generate a new song by clicking 1. \n(Or you can choose options 2 (play), 3 (main menu) or 4 (exit) at any point.)\n')
-					#print (rsong)
 					while option == "1":
-						#rsong = random.choice(totallist)
 						idk = randsong()
 						print(idk)
 						xyz = str(idk)
