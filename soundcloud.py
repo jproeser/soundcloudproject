@@ -18,13 +18,17 @@ import sqlite3
 import webbrowser  
 
 def getzip():
+	#gets a valid zip code from the user
 	while True:
 		try:
 			x = input('---> ')
+			#takes in input
 			float(x)
+			#try and except to validate that it is a number
 			if len(str(x)) != 5:
 				print('\nPlease enter a 5-digit zip code\n')
 				continue
+				#validate that it is a 5-digit zip code
 		except ValueError:
 			print ("\nThis is not a number. Please try again.\n")
 			continue
@@ -33,10 +37,13 @@ def getzip():
 			break
 
 def getradius():
+	#gets a valid search radius from the user
 	while True:
 		try:
 			y = input('---> ')
+			#takes in input			
 			float(y)
+			#try and except to validate that it is a number
 			if str(y) == '0':
 				print('\nPlease enter a search radius larger than 0\n')
 				continue
@@ -56,7 +63,7 @@ def addusertodatabase():
 			url = str("https://soundcloud.com/" + accname)
 			request = requests.get(url)
 			if request.status_code == 200:
-				#print(accname)
+				#makes sure that the soundcloud account name is real by checking the url link to see if it exists/opens
 				break
 			else:
 				print('\nSorry, this was an invalid response, please try again. Souncloud URL names must only use numbers, lowercase letters, underscores or hyphens, and they must start with a letter or number. \nPlease try again. And make sure you are connected to the internet.') 
@@ -87,7 +94,9 @@ def addusertodatabase():
 	accounts = {}
 	accounts[readyacczip] = readyaccname
 	with open('accounts.json', 'a') as fp:
+		#opens the existing file, rather than creating a new one
 		json.dump(accounts, fp, indent=4)
+		#adds the individual account zip and name in an organized format
 	print('\nThank you, your account has been added as \"'+readyaccname+'\" (Full URL:', readyfullurl+")", 'with Zip Code', readyacczip)
 	options()
 
@@ -102,16 +111,20 @@ def listofusers():
 
 			search = ZipcodeSearchEngine()
 			zipcode = search.by_zipcode(str(searchzip))
-			#print(zipcode)
+			#searches zip code module for a given zipcode
 			mylat = re.findall('"Latitude": (\S+),', str(zipcode))
 			mylong = re.findall('"Longitude": (\S+),', str(zipcode))
+			#finds the latitude and lognitude of a given zip code to be able to search for other zips in the radius
 			res = search.by_coordinate(zipcode.Latitude, zipcode.Longitude, radius= searchradius, returns=100)
+			#finds up to 100 zips in a given radius
 			searchresults = []
 			for zipcode in res:
 				searchresults.append(zipcode.Zipcode)
+				#stores each of the zip codes in a list
 				searchcity = zipcode.City
 				searchstate = zipcode.State 
 		except:
+			#try and except to only take real zip codes that exist
 			print("\nSorry, I didn't understand that. Please enter a valid 5-digit zip code.\n")
 			continue
 		else:
@@ -126,9 +139,11 @@ def listofusers():
 				zipsearch = str(zipcode)
 				y = '": "(\S+)"'
 				myzipsearch = str(x + zipsearch + y)
+				#allows for the regex search to continually change based on the current zip code that you using from going through the list of zip codes in radius
 				links = re.findall(myzipsearch, acczip)
 				for link in links:
 					names.append(link)
+					#stores each of the names found in the zip code from the accounts database
 		if len(names) > 0:
 			print('\nSoundcloud users in our database that are within ' + str(searchradius) + ' miles of ' + str(searchcity) + ', ' + str(searchstate) + ' (' + str(searchzip) + '):')
 			for account in names:
@@ -188,6 +203,7 @@ def parseSoundcloud(x):
 	# chromedriver = "files/chromedriver"
 	# os.environ["webdriver.chrome.driver"] = chromedriver
 	# driver = webdriver.Chrome(chromedriver)
+	####Possibility of opening the window of each account that is searched through, rather than doing it through phantom
 	driver = webdriver.PhantomJS()
 	driver.set_window_size(1120, 550)
 	url = 'https://soundcloud.com/'+str(x)+'/tracks'
@@ -200,11 +216,14 @@ def parseSoundcloud(x):
 	while scheight < 9.9:
 		driver.execute_script("window.scrollTo(0, document.body.scrollHeight/%s);" % scheight)
 		scheight += .01
+	#scrolls through the entire webpage so that all the songs are found, not just the first 10
 
 	elem = driver.find_element_by_tag_name('a')
 
 	for x in driver.find_elements_by_class_name('soundTitle__title'):
+	#finds the link to each song of each user
 		songlinks.append(x.get_attribute('href'))
+		#stores this in a list
 	driver.quit()
 	return songlinks
 
@@ -257,6 +276,7 @@ def getrandomsongs():
 				templist = parseSoundcloud(item)
 				myregx = 'https://soundcloud.com/'+str(item)
 				myregex = str('^' + str(myregx))
+				#makes sure that only songs from the users in our database are kept in the list, since the parser can sometimes grab other songs that aren't the user's
 				for link in templist:
 					if re.match(myregex, link):
 						totallist.append(link)
@@ -265,6 +285,7 @@ def getrandomsongs():
 
 			def randsong():
 				rsong = random.choice(totallist)
+				#generates a random song
 				return (rsong)
 
 			def selection():
@@ -284,6 +305,7 @@ def getrandomsongs():
 						option = input('---> ')	
 					if option == "2":
 						webbrowser.open(xyz, new=2, autoraise=True)
+						#opens in a new tab in the same window
 						selection()
 					elif option == "3":
 						options()
